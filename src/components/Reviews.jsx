@@ -1,62 +1,46 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Statistics } from "./Statistics";
 import { FeedbackOptions } from "./FeedbackOptions";
 
-export class Reviews extends React.Component {
-  state = {
-    good: this.props.good,
-    neutral: this.props.neutral,
-    bad: this.props.bad,
+export const Reviews = ({ good, neutral, bad }) => {
+  const [goodCount, setGoodCount] = useState(good);
+  const [neutralCount, setNeutralCount] = useState(neutral);
+  const [badCount, setBadCount] = useState(bad);
+
+  const onGood = () => {
+    setGoodCount((prevGoodCount) => prevGoodCount + 1);
   };
 
-  onGood = () => {
-    this.setState((prevState) => ({
-      good: prevState.good + 1,
-    }));
+  const onNeutral = () => {
+    setNeutralCount((prevNeutralCount) => prevNeutralCount + 1);
   };
 
-  onNeutral = () => {
-    this.setState((prevState) => ({
-      neutral: prevState.neutral + 1,
-    }));
+  const onBad = () => {
+    setBadCount((prevBadCount) => prevBadCount + 1);
   };
 
-  onBad = () => {
-    this.setState((prevState) => ({
-      bad: prevState.bad + 1,
-    }));
-  };
-  countTotalFeedback = () => {
-    return this.state.good + this.state.neutral + this.state.bad;
+  const countTotalFeedback = () => {
+    return goodCount + neutralCount + badCount;
   };
 
-  countPositiveFeedbackPercentage = () => {
-    const total = this.countTotalFeedback();
-    if (total === 0) {
-      return 0;
-    }
-
-    return Math.round((this.state.good / total) * 100);
+  const countPositiveFeedbackPercentage = () => {
+    const total = countTotalFeedback();
+    if (total === 0) return 0;
+    return Math.round((goodCount / total) * 100);
   };
 
-  render() {
-    const options = ["good", "neutral", "bad"];
+  const options = ["good", "neutral", "bad"];
 
-    return (
-      <>
-        <FeedbackOptions
-          onGood={this.onGood}
-          onNeutral={this.onNeutral}
-          onBad={this.onBad}
-        />
-        <Statistics
-          good={this.state.good}
-          neutral={this.state.neutral}
-          bad={this.state.bad}
-          total={this.countTotalFeedback()}
-          positivePercentage={this.countPositiveFeedbackPercentage()}
-        />
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <FeedbackOptions onGood={onGood} onNeutral={onNeutral} onBad={onBad} />
+      <Statistics
+        good={goodCount}
+        neutral={neutralCount}
+        bad={badCount}
+        total={countTotalFeedback()}
+        positivePercentage={countPositiveFeedbackPercentage()}
+      />
+    </>
+  );
+};
